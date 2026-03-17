@@ -144,7 +144,7 @@ export default function WinnerModal({
           <ThemedText style={styles.trophy}>🏆</ThemedText>
         </View>
 
-        <ThemedText style={styles.congratsText}>Congratulations!</ThemedText>
+        <ThemedText style={styles.congratsText}>Chúc mừng!</ThemedText>
 
         <View style={[styles.winnerBadge, { backgroundColor: colors.tint + '15' }]}>
           <ThemedText style={[styles.winnerName, { color: colors.tint }]}>
@@ -153,7 +153,7 @@ export default function WinnerModal({
         </View>
 
         <ThemedText style={[styles.subtitleText, { color: colors.icon }]}>
-          is the lucky winner! 🎉
+          là người chiến thắng! 🎉
         </ThemedText>
 
         <View style={styles.buttonRow}>
@@ -165,7 +165,7 @@ export default function WinnerModal({
             style={[styles.squareBtn, styles.secondaryBtn, { borderColor: colors.danger }]}
           >
             <ThemedText style={[styles.squareBtnText, { color: colors.danger }]}>
-              Remove
+              Xoá
             </ThemedText>
           </TouchableOpacity>
 
@@ -177,7 +177,7 @@ export default function WinnerModal({
             style={[styles.squareBtn, styles.primaryBtn, { backgroundColor: colors.tint }]}
           >
             <ThemedText style={[styles.squareBtnText, { color: '#FFFFFF' }]}>
-              Close
+              Đóng
             </ThemedText>
           </TouchableOpacity>
         </View>

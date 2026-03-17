@@ -103,7 +103,7 @@ export default function SpinButton({ onPress, disabled, spinning }: SpinButtonPr
         ]}
       >
         <ThemedText style={styles.buttonText}>
-          {spinning ? '🎡 Spinning...' : '🎯 SPIN'}
+          {spinning ? '🎡 Đang quay...' : '🎯 QUAY'}
         </ThemedText>
       </AnimatedTouchable>
     </View>

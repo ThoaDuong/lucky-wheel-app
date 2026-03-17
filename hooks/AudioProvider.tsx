@@ -9,30 +9,31 @@ interface AudioContextType {
   setGlobalVolume: (val: number) => void;
   playClick: () => Promise<void>;
   playWin: () => Promise<void>;
-  playSpin: () => Promise<void>;
-  stopSpin: () => Promise<void>;
+  playTick: () => Promise<void>;
 }
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
 
 const SOUNDS = {
-  click: 'https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3',
-  win: 'https://assets.mixkit.co/active_storage/sfx/2020/2020-preview.mp3',
-  spin: 'https://assets.mixkit.co/active_storage/sfx/1344/1344-preview.mp3',
+  click: require('../assets/sounds/click.mp3'),
+  win: require('../assets/sounds/win.mp3'),
+  tick: require('../assets/sounds/tick.mp3'),
 };
 
 export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(0.5);
-  const spinSound = useRef<Audio.Sound | null>(null);
+  const tickSound = useRef<Audio.Sound | null>(null);
+  const clickSound = useRef<Audio.Sound | null>(null);
+  const winSound = useRef<Audio.Sound | null>(null);
 
   useEffect(() => {
     loadSettings();
-    initializeSpinSound();
+    initializeSounds();
     return () => {
-      if (spinSound.current) {
-        spinSound.current.unloadAsync();
-      }
+      [tickSound, clickSound, winSound].forEach(ref => {
+        if (ref.current) ref.current.unloadAsync();
+      });
     };
   }, []);
 
@@ -59,15 +60,18 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } catch (e) {}
   };
 
-  const initializeSpinSound = async () => {
+  const initializeSounds = async () => {
     try {
-      const { sound } = await Audio.Sound.createAsync(
-        { uri: SOUNDS.spin },
-        { isLooping: true, volume: isMuted ? 0 : volume }
-      );
-      spinSound.current = sound;
+      const { sound: tSound } = await Audio.Sound.createAsync(SOUNDS.tick, { shouldPlay: false, volume: isMuted ? 0 : volume });
+      tickSound.current = tSound;
+      
+      const { sound: cSound } = await Audio.Sound.createAsync(SOUNDS.click, { shouldPlay: false, volume: isMuted ? 0 : volume });
+      clickSound.current = cSound;
+
+      const { sound: wSound } = await Audio.Sound.createAsync(SOUNDS.win, { shouldPlay: false, volume: isMuted ? 0 : volume });
+      winSound.current = wSound;
     } catch (e) {
-      console.error('Failed to pre-load spin sound', e);
+      console.error('Failed to pre-load sounds', e);
     }
   };
 
@@ -82,56 +86,35 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const setGlobalVolume = (val: number) => {
     setVolume(val);
     saveVolume(val);
-    if (spinSound.current) {
-      spinSound.current.setVolumeAsync(isMuted ? 0 : val);
-    }
+    [tickSound, clickSound, winSound].forEach(ref => {
+      if (ref.current) ref.current.setVolumeAsync(isMuted ? 0 : val);
+    });
   };
 
   const playClick = useCallback(async () => {
-    if (isMuted) return;
+    if (isMuted || !clickSound.current) return;
     try {
-      const { sound } = await Audio.Sound.createAsync(
-        { uri: SOUNDS.click },
-        { shouldPlay: true, volume }
-      );
-      sound.setOnPlaybackStatusUpdate((status) => {
-        if (status.isLoaded && status.didJustFinish) {
-          sound.unloadAsync();
-        }
-      });
+      await clickSound.current.setPositionAsync(0);
+      await clickSound.current.playAsync();
     } catch (e) {}
-  }, [isMuted, volume]);
+  }, [isMuted]);
 
   const playWin = useCallback(async () => {
-    if (isMuted) return;
+    if (isMuted || !winSound.current) return;
     try {
-      const { sound } = await Audio.Sound.createAsync(
-        { uri: SOUNDS.win },
-        { shouldPlay: true, volume }
-      );
-      sound.setOnPlaybackStatusUpdate((status) => {
-        if (status.isLoaded && status.didJustFinish) {
-          sound.unloadAsync();
-        }
-      });
+      await winSound.current.setPositionAsync(0);
+      await winSound.current.playAsync();
     } catch (e) {}
-  }, [isMuted, volume]);
+  }, [isMuted]);
 
-  const playSpin = useCallback(async () => {
-    if (isMuted || !spinSound.current) return;
+  const playTick = useCallback(async () => {
+    if (isMuted || !tickSound.current) return;
     try {
-      await spinSound.current.setVolumeAsync(volume);
-      await spinSound.current.playAsync();
+      // For very rapid sounds, seek to 0 and play
+      await tickSound.current.setPositionAsync(0);
+      await tickSound.current.playAsync();
     } catch (e) {}
-  }, [isMuted, volume]);
-
-  const stopSpin = useCallback(async () => {
-    if (spinSound.current) {
-      try {
-        await spinSound.current.stopAsync();
-      } catch (e) {}
-    }
-  }, []);
+  }, [isMuted]);
 
   return (
     <AudioContext.Provider
@@ -142,8 +125,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setGlobalVolume,
         playClick,
         playWin,
-        playSpin,
-        stopSpin,
+        playTick,
       }}
     >
       {children}

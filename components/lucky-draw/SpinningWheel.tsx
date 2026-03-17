@@ -4,6 +4,7 @@ import { Dimensions, StyleSheet, View } from 'react-native';
 import Animated, {
   Easing,
   runOnJS,
+  useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -53,13 +54,24 @@ function describeArc(
 }
 
 export default function SpinningWheel({ names, spinning, onSpinEnd, onSpinComplete }: SpinningWheelProps) {
-  const { playSpin, stopSpin } = useAudio();
+  const { playTick } = useAudio();
   const rotation = useSharedValue(0);
+  const lastTickIndex = useSharedValue(0);
   const segmentAngle = 360 / (names.length || 1);
+
+  useAnimatedReaction(
+    () => rotation.value,
+    (currentRotation) => {
+      const index = Math.floor(currentRotation / segmentAngle);
+      if (index !== lastTickIndex.value) {
+        lastTickIndex.value = index;
+        runOnJS(playTick)();
+      }
+    }
+  );
 
   useEffect(() => {
     if (spinning && names.length > 0) {
-      playSpin();
       // Random extra rotations (5-8 full spins) + random landing position
       const extraSpins = 5 + Math.random() * 3;
       const randomAngle = Math.random() * 360;
@@ -78,7 +90,6 @@ export default function SpinningWheel({ names, spinning, onSpinEnd, onSpinComple
           const pointerAngle = (360 - normalizedAngle + 90) % 360;
           const winnerIndex = Math.floor(pointerAngle / segmentAngle) % names.length;
           runOnJS(onSpinEnd)(names[winnerIndex]);
-          runOnJS(stopSpin)();
           runOnJS(onSpinComplete)();
         }
       });
@@ -110,7 +121,7 @@ export default function SpinningWheel({ names, spinning, onSpinEnd, onSpinComple
             fill="#ADB5BD"
             fontWeight="600"
           >
-            Add names to start
+            Thêm tên để bắt đầu
           </SvgText>
         </Svg>
       </View>

@@ -4,17 +4,20 @@ import SpinningWheel from '@/components/lucky-draw/SpinningWheel';
 import WinnerModal from '@/components/lucky-draw/WinnerModal';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
+import { IconSymbol } from '@/components/ui/icon-symbol';
+import { useAudio } from '@/hooks/AudioProvider';
 import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
   View,
 } from 'react-native';
 
-const DEFAULT_NAMES = ['Ali', 'Beatriz', 'Charles', 'Diya', 'Eric', 'Fatima', 'Gabriel', 'Hanna'];
+const DEFAULT_NAMES = ['Cơm Tấm', 'Bún Bò Huế', 'Phở', 'Bánh Mì', 'Hủ Tiếu', 'Bún Chả', 'Bún Riêu', 'Bánh Xèo'];
 
 export default function LuckyDrawScreen() {
   const [names, setNames] = useState<string[]>(DEFAULT_NAMES);
@@ -23,6 +26,8 @@ export default function LuckyDrawScreen() {
   const [showWinner, setShowWinner] = useState(false);
   const colorScheme = useColorScheme() ?? 'light';
   const colors = Colors[colorScheme];
+  const router = useRouter();
+  const { playClick } = useAudio();
 
   const handleSpin = useCallback(() => {
     if (names.length < 2 || spinning) return;
@@ -57,10 +62,21 @@ export default function LuckyDrawScreen() {
     <>
       <Stack.Screen
         options={{
-          title: 'Lucky Wheel',
+          title: 'Vòng Quay May Mắn',
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.text,
           headerShadowVisible: false,
+          headerLeft: ({ canGoBack }) => canGoBack ? (
+            <TouchableOpacity
+              onPress={() => {
+                playClick();
+                router.back();
+              }}
+              style={{ padding: 8, marginLeft: Platform.OS === 'ios' ? -16 : 0, flexDirection: 'row', alignItems: 'center' }}
+            >
+              <IconSymbol name="chevron.left" size={24} color={colors.text} />
+            </TouchableOpacity>
+          ) : null,
         }}
       />
       <View style={[styles.container, { backgroundColor: colors.background }]}>

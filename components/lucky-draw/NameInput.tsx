@@ -26,7 +26,7 @@ export default function NameInput({ names, onNamesChange }: NameInputProps) {
   useEffect(() => {
     const currentLines = text.split('\n').map(n => n.trim()).filter(n => n.length > 0);
     const isSame = currentLines.length === names.length && currentLines.every((val, index) => val === names[index]);
-    
+
     if (!isSame) {
       setText(names.join('\n'));
     }
@@ -49,7 +49,7 @@ export default function NameInput({ names, onNamesChange }: NameInputProps) {
       {/* Header actions */}
       <View style={styles.headerRow}>
         <ThemedText style={styles.title}>
-          Participants ({names.length})
+          Danh sách các lựa chọn ({names.length})
         </ThemedText>
         <View style={styles.headerActions}>
           <TouchableOpacity
@@ -64,7 +64,7 @@ export default function NameInput({ names, onNamesChange }: NameInputProps) {
             style={[styles.clearBtn, { backgroundColor: colors.inputBackground }]}
           >
             <ThemedText style={{ color: names.length === 0 ? colors.icon + '50' : colors.danger, fontSize: 14, fontWeight: '600' }}>
-              Clear
+              Xoá
             </ThemedText>
           </TouchableOpacity>
         </View>
@@ -75,7 +75,7 @@ export default function NameInput({ names, onNamesChange }: NameInputProps) {
         style={[styles.textArea, { color: colors.text, backgroundColor: colors.inputBackground, borderColor: colors.inputBorder }]}
         multiline
         textAlignVertical="top"
-        placeholder={`Enter names here, separated by new lines...\nAlice\nBob\nCharlie`}
+        placeholder={`Nhập tên vào đây, mỗi tên một dòng...\nAn\nBình\nChâu`}
         placeholderTextColor={colors.icon}
         value={text}
         onChangeText={handleTextChange}

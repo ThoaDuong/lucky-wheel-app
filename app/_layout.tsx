@@ -3,31 +3,39 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AudioProvider } from '@/hooks/AudioProvider';
+import { ThemeProvider as AppThemeProvider, useThemeContext } from '@/hooks/ThemeProvider';
 
 export const unstable_settings = {
   anchor: '(tabs)',
 };
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+function RootApp() {
+  const { activeColorScheme } = useThemeContext();
 
   return (
+    <ThemeProvider value={activeColorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="lucky-wheel"
+          options={{
+            headerBackTitle: 'Trang Chủ',
+            animation: 'slide_from_right',
+          }}
+        />
+      </Stack>
+      <StatusBar style={activeColorScheme === 'dark' ? 'light' : 'dark'} />
+    </ThemeProvider>
+  );
+}
+
+export default function RootLayout() {
+  return (
     <AudioProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="lucky-wheel"
-            options={{
-              headerBackTitle: 'Home',
-              animation: 'slide_from_right',
-            }}
-          />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
+      <AppThemeProvider>
+        <RootApp />
+      </AppThemeProvider>
     </AudioProvider>
   );
 }

@@ -85,7 +85,7 @@ export default function GameCard({
 
       {comingSoon && (
         <View style={styles.badge}>
-          <ThemedText style={styles.badgeText}>Coming Soon</ThemedText>
+          <ThemedText style={styles.badgeText}>Sắp Ra Mắt</ThemedText>
         </View>
       )}
     </AnimatedTouchable>
