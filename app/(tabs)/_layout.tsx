@@ -38,6 +38,27 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="gearshape.fill" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="lucky-wheel"
+        options={{
+          href: null,
+          title: 'Vòng Quay May Mắn',
+        }}
+      />
+      <Tabs.Screen
+        name="truth-dare"
+        options={{
+          href: null,
+          title: 'Thật hay Thách',
+        }}
+      />
+      <Tabs.Screen
+        name="drinking"
+        options={{
+          href: null,
+          title: 'Drinking Game',
+        }}
+      />
     </Tabs>
   );
 }

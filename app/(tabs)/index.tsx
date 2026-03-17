@@ -34,7 +34,7 @@ export default function HomeScreen() {
             description="Bạn đang đắn đo để đưa ra quyết định, hãy để vũ trụ ra tay!"
             emoji="🎡"
             gradientColors={['#6C5CE7', '#A29BFE']}
-            onPress={() => router.push('/lucky-wheel')}
+            onPress={() => router.push('/(tabs)/lucky-wheel')}
           />
 
           <GameCard
@@ -42,9 +42,7 @@ export default function HomeScreen() {
             description="Nơi những bí mật được bật mí, những thử thách được thực hiện!"
             emoji="🤔"
             gradientColors={['#E17055', '#FDCB6E']}
-            onPress={() => { }}
-            disabled
-            comingSoon
+            onPress={() => router.push('/(tabs)/truth-dare')}
           />
 
           <GameCard
@@ -52,9 +50,7 @@ export default function HomeScreen() {
             description="Nếu bạn không vui thì người khác sẽ vui!"
             emoji="🍻"
             gradientColors={['#00B894', '#55EFC4']}
-            onPress={() => { }}
-            disabled
-            comingSoon
+            onPress={() => router.push('/(tabs)/drinking')}
           />
         </View>
       </ScrollView>

@@ -4,7 +4,7 @@ import SpinningWheel from '@/components/lucky-draw/SpinningWheel';
 import WinnerModal from '@/components/lucky-draw/WinnerModal';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { Stack, useRouter } from 'expo-router';
+import { Tabs, useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useAudio } from '@/hooks/AudioProvider';
@@ -60,13 +60,15 @@ export default function LuckyDrawScreen() {
 
   return (
     <>
-      <Stack.Screen
+      <Tabs.Screen
         options={{
+          headerShown: true,
           title: 'Vòng Quay May Mắn',
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.text,
           headerShadowVisible: false,
-          headerLeft: ({ canGoBack }) => canGoBack ? (
+          tabBarStyle: { display: 'flex' }, // Ensure tab bar stays visible
+          headerLeft: () => (
             <TouchableOpacity
               onPress={() => {
                 playClick();
@@ -76,7 +78,7 @@ export default function LuckyDrawScreen() {
             >
               <IconSymbol name="chevron.left" size={24} color={colors.text} />
             </TouchableOpacity>
-          ) : null,
+          ),
         }}
       />
       <View style={[styles.container, { backgroundColor: colors.background }]}>
